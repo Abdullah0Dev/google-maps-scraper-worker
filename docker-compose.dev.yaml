@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   db:
     image: postgres:15.2-alpine
@@ -16,6 +18,7 @@ services:
       interval: 2s
       timeout: 30s
       retries: 5
+
   migrate:
     image: migrate/migrate
     volumes:
@@ -27,5 +30,23 @@ services:
       db:
         condition: service_healthy
 
+  map-scraper:
+    image: gosom/google-maps-scraper:latest
+    container_name: gmaps-scraper
+    command: -data-folder /gmapsdata
+    environment:
+      - ENABLE_REST_API=true
+      - CONCURRENCY=5
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres?sslmode=disable
+    volumes:
+      - gmapsdata:/gmapsdata
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+
 volumes:
   gmapsdev:
+  gmapsdata:
