@@ -32,7 +32,7 @@ services:
 
   map-scraper:
     image: gosom/google-maps-scraper:latest
-    container_name: gmaps-scraper
+    container_name: gmaps-scraper-rest
     command: -data-folder /gmapsdata
     environment:
       - ENABLE_REST_API=true
